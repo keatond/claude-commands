@@ -168,37 +168,108 @@ Include this protocol in AGENTS.md for every project:
 
 ## PHASE 5 — PLAN FILE OUTPUT
 
-After the interview and design are complete, write the plan to `~/.claude/plans/[project-slug].md` with these sections:
+After the interview and design are complete, write the plan to `~/.claude/plans/[project-slug].html` as a self-contained HTML file. Use this exact structure:
 
-```markdown
-# Plan: [Project Name]
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plan: [Project Name]</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 2rem; background: #0f0f0f; color: #e0e0e0; line-height: 1.65; }
+  h1 { color: #fff; border-bottom: 2px solid #2a2a2a; padding-bottom: 0.5rem; margin-bottom: 0.25rem; }
+  h1 small { font-size: 0.5em; color: #666; font-weight: normal; }
+  h2 { color: #a0c4ff; margin-top: 2.5rem; border-left: 3px solid #a0c4ff; padding-left: 0.75rem; }
+  h3 { color: #80d8a0; margin-top: 1.5rem; }
+  code { background: #1e1e1e; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.88em; color: #f0a070; }
+  pre { background: #1a1a1a; border: 1px solid #2a2a2a; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.88em; }
+  pre code { background: none; color: #ccc; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th { background: #1a1a1a; text-align: left; padding: 0.6rem 0.75rem; color: #aaa; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #222; }
+  .ticket { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+  .ticket-title { margin: 0 0 0.75rem; color: #ffd080; font-size: 1.05em; display: flex; align-items: center; gap: 0.75rem; }
+  .badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.75em; font-weight: 700; letter-spacing: 0.03em; }
+  .badge-open { background: #1a2a3a; color: #6ab0f5; }
+  .badge-haiku { background: #1a2a1a; color: #80d8a0; }
+  .badge-sonnet { background: #2a2a1a; color: #ffd080; }
+  .badge-opus { background: #2a1a2a; color: #d080ff; }
+  .meta { font-size: 0.82em; color: #666; margin-bottom: 0.75rem; }
+  .criteria { margin: 0; padding-left: 1.25rem; }
+  .criteria li { margin: 0.3rem 0; color: #ccc; font-size: 0.93em; }
+  .dep-graph { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1rem; font-family: monospace; font-size: 0.88em; color: #aaa; white-space: pre; }
+  ul, ol { padding-left: 1.5rem; }
+  li { margin: 0.3rem 0; }
+  p { margin: 0.6rem 0; }
+  .section-meta { color: #555; font-size: 0.85em; margin-top: -0.5rem; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
 
-## Context
-[Why this is being built, what problem it solves, who uses it]
+<h1>Plan: [Project Name] <small>Generated [date]</small></h1>
 
-## Deliverable
-[Exactly what will exist when done — file path, URL, command, etc.]
+<h2>Context</h2>
+<p>[Why this is being built, what problem it solves, who uses it]</p>
 
-## Project Structure
-[Directory tree of files to be created]
+<h2>Deliverable</h2>
+<p>[Exactly what will exist when done — file path, URL, command, etc.]</p>
 
-## Agent Teams
-[Table: Team | Role | LLM Level | Rationale]
+<h2>Project Structure</h2>
+<pre><code>[Directory tree of files to be created]</code></pre>
 
-## Ticket Breakdown
-[All tickets organized by phase, with acceptance criteria]
+<h2>Agent Teams</h2>
+<table>
+  <thead><tr><th>Team</th><th>Role</th><th>LLM</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td>[Team]</td><td>[Role]</td><td><span class="badge badge-[level]">[level]</span></td><td>[Rationale]</td></tr>
+  </tbody>
+</table>
 
-## QA Monitor Protocol
-[The 5-step evaluate-and-route process]
+<h2>Ticket Breakdown</h2>
 
-## Execution Order
-[Dependency graph showing parallel vs. sequential]
+<!-- Repeat this block for each ticket -->
+<div class="ticket">
+  <div class="ticket-title">
+    T-[ID] — [Short Title]
+    <span class="badge badge-open">OPEN</span>
+    <span class="badge badge-[llm]">[llm]</span>
+  </div>
+  <div class="meta">Team: [Team Name]</div>
+  <p>[1-2 sentence description]</p>
+  <h3 style="margin-top:0.5rem;font-size:0.9em;color:#888;">Acceptance Criteria</h3>
+  <ul class="criteria">
+    <li>[Criterion 1]</li>
+    <li>[Criterion 2]</li>
+  </ul>
+</div>
 
-## Verification
-[How the user tests the final result — specific actions + expected outcomes]
+<h2>QA Monitor Protocol</h2>
+<ol>
+  <li>Reads the ticket's acceptance criteria from TICKETS.md</li>
+  <li>Reads the relevant code/output</li>
+  <li>Traces logic or inspects output against each criterion</li>
+  <li>Updates TICKETS.md: <code>CLOSED</code> if ALL criteria pass; <code>NEEDS_REWORK</code> + failure note if ANY fail</li>
+  <li>Does NOT fix tickets — only evaluates and routes</li>
+  <li>After 2 NEEDS_REWORK rounds → escalates to Architect (opus)</li>
+</ol>
+
+<h2>Execution Order</h2>
+<div class="dep-graph">[dependency graph with comments]</div>
+
+<h2>Verification</h2>
+<p>[How the user tests the final result — specific actions + expected outcomes]</p>
+
+</body>
+</html>
 ```
 
-Then present this plan to the user and ask for approval before any execution begins.
+Populate every `[placeholder]` with real content from the plan. Each ticket gets its own `<div class="ticket">` block. Apply the correct badge class: `badge-haiku`, `badge-sonnet`, or `badge-opus`.
+
+After writing the file, tell the user:
+> Plan written to `~/.claude/plans/[project-slug].html` — open it in your browser to review.
+
+Then ask for approval before any execution begins. Do **not** print the full plan content in the terminal.
 
 ---
 
