@@ -1,10 +1,22 @@
-You are running the `/project-plan` command. Execute all six phases below in order. Never skip phases, never build until the plan is approved.
+---
+name: project-plan
+description: Full project planning skill — interview the user until aligned, then generate a complete agentic project plan with teams, tickets, acceptance criteria, and a QA monitor protocol.
+---
+
+You are running the `/project-plan` command. Execute all seven phases below in order. Never skip phases, never build until the plan is approved.
 
 ---
 
 ## Phase 1 — Discovery Interview
 
-Interview the user through exactly 16 decision-tree questions. Ask **one question at a time**. Lead each question with a concrete recommendation when a sensible default exists (e.g., "I'd suggest X — does that work, or do you have something else in mind?"). Wait for the user's answer before asking the next question.
+Interview the user through up to 16 decision-tree questions. Ask **one question at a time**. Lead each question with a concrete recommendation when a sensible default exists. Wait for the user's answer before asking the next question.
+
+**Interview depth scales with project type.** After question 1, assess complexity and adjust:
+- **Simple project** (script, static page, estimated ≤5 tickets): cover questions 1–8, 14–15; skip 9–13 unless user raises them
+- **Static web app (no backend)**: skip questions 9 (auth), 10 (data/persistence), 11 (performance) unless user mentions them
+- **Complex project** (full-stack, multi-service, estimated >10 tickets): cover all 16 questions
+
+For **simple projects** (confirmed ≤5 tickets after Q1), you may batch 2-3 closely related questions into one `AskUserQuestion` call to reduce round trips.
 
 Decision tree (adapt wording naturally; keep the coverage):
 
@@ -25,7 +37,7 @@ Decision tree (adapt wording naturally; keep the coverage):
 15. **Definition of done** — How will we know when the project is complete and successful?
 16. **Open risks or unknowns** — What is the user most uncertain or worried about?
 
-After all 16 answers are collected, summarize what you heard back to the user in a short bulleted list and ask: "Does this capture everything, or anything to correct before I build the plan?"
+After all required answers are collected, summarize what you heard back to the user in a short bulleted list and ask: "Does this capture everything, or anything to correct before I build the plan?"
 
 ---
 
@@ -46,7 +58,13 @@ List the team you are assembling and which tickets each role owns. If the projec
 
 ## Phase 3 — Ticket Decomposition
 
-Break the project into **phases**. Each phase must complete before the next begins (unless tasks within a phase are safely parallelizable, which you must note explicitly).
+Break the project into **phases**. Each phase must complete before the next begins (unless tasks within a phase are safely parallelizable).
+
+**Parallel rule (apply mechanically):** Tickets run in parallel by default. Make sequential only when:
+1. They write to the same file, OR
+2. One ticket's output is another's required input.
+
+Everything else is parallel — mark it explicitly with `Parallel-safe: yes`.
 
 For each ticket write:
 
@@ -72,6 +90,8 @@ Rules:
 - Never write vague criteria like "feature is implemented" or "code is clean."
 - Every criterion must be falsifiable: a QA agent can inspect output or code and give a binary PASS/FAIL.
 - Keep tickets small enough that one agent can complete them in a single session.
+
+**Size gate:** If the project will have ≤5 tickets total, skip a dedicated Phase 0 setup ticket. Do any directory creation and tracking file setup inline during Phase 6 execution — the agent-spawn overhead isn't worth it for a small project.
 
 ---
 
@@ -123,10 +143,16 @@ Do not proceed to Phase 6 until the user replies APPROVED (or equivalent confirm
 Execute phase-by-phase:
 
 1. Announce which phase you are starting.
-2. For each ticket in the phase: implement it, then hand off to the QA Monitor role for gate review against the acceptance criteria.
-3. If QA returns NEEDS_REWORK: fix and re-gate. After 2 failures on the same ticket, pause and escalate to Architect analysis before retrying.
-4. Once all tickets in a phase pass QA, announce the phase as CLOSED and move to the next.
-5. After the final phase, deliver a completion summary: what was built, any deviations from the plan, and suggested follow-on work. Then immediately execute **Phase 7 — Post-Project Review**.
+2. **Size gate for setup:** If total ticket count ≤5, do any directory creation and tracking file setup inline — don't spawn a separate Architect agent for it.
+3. For each ticket in the phase: implement it, then hand off to the QA Monitor role for gate review against the acceptance criteria.
+4. If QA returns NEEDS_REWORK, fix and re-gate. The fix agent prompt must include:
+   - The failing acceptance criterion verbatim from the ticket
+   - The QA Monitor's specific failure note
+   - The file path(s) to change
+   A cold "fix ticket N.M" prompt is not enough — the agent needs the precise failure context to avoid re-discovering the same problem.
+5. After 2 NEEDS_REWORK failures on the same ticket, pause and escalate to Architect (opus) analysis before retrying.
+6. Once all tickets in a phase pass QA, announce the phase as CLOSED and move to the next.
+7. After the final phase, deliver a completion summary: what was built, any deviations from the plan, and suggested follow-on work. Then immediately execute **Phase 7 — Post-Project Review**.
 
 Always run tests and verify observable behavior — do not self-certify acceptance criteria without evidence.
 
@@ -155,11 +181,11 @@ For each finding from Step 1, decide if it is a lesson worth persisting:
 
 ### Step 3 — Duplicate Check
 
-Before writing any memory entry, read `/home/drakenas/.claude/projects/-home-drakenas/memory/MEMORY.md`. If a lesson is already captured there, skip it. If an existing entry is outdated or incomplete, update it instead of creating a duplicate.
+Before writing any memory entry, read `~/.claude/projects/-home-drake/memory/MEMORY.md`. If a lesson is already captured there, skip it. If an existing entry is outdated or incomplete, update it instead of creating a duplicate.
 
 ### Step 4 — Write Memory Entries
 
-Write memory entries to `/home/drakenas/.claude/projects/-home-drakenas/memory/` using this exact frontmatter format:
+Write memory entries to `~/.claude/projects/-home-drake/memory/` using this exact frontmatter format:
 
 ```markdown
 ---
@@ -180,7 +206,7 @@ Write **one file per lesson**. Name files descriptively: `feedback_<topic>.md` o
 
 ### Step 5 — Update MEMORY.md Index
 
-For each new or updated memory file, add or update a one-line entry in `/home/drakenas/.claude/projects/-home-drakenas/memory/MEMORY.md`:
+For each new or updated memory file, add or update a one-line entry in `~/.claude/projects/-home-drake/memory/MEMORY.md`:
 
 ```
 - [Title](filename.md) — one-line hook (under 150 chars total)
@@ -202,5 +228,5 @@ Output a structured report to the user:
 - [list of files written or updated, or "none"]
 
 ### Patterns to Watch
-[1–3 sentences on any recurring themes across findings — e.g., "QA self-certification happened twice; consider stricter evidence requirements in Phase 4."]
+[1–3 sentences on any recurring themes across findings]
 ```

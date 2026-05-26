@@ -1,0 +1,26 @@
+body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 2rem; background: #0f0f0f; color: #e0e0e0; line-height: 1.65; }
+h1 { color: #fff; border-bottom: 2px solid #2a2a2a; padding-bottom: 0.5rem; margin-bottom: 0.25rem; }
+h1 small { font-size: 0.5em; color: #666; font-weight: normal; }
+h2 { color: #a0c4ff; margin-top: 2.5rem; border-left: 3px solid #a0c4ff; padding-left: 0.75rem; }
+h3 { color: #80d8a0; margin-top: 1.5rem; }
+code { background: #1e1e1e; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.88em; color: #f0a070; }
+pre { background: #1a1a1a; border: 1px solid #2a2a2a; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.88em; }
+pre code { background: none; color: #ccc; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th { background: #1a1a1a; text-align: left; padding: 0.6rem 0.75rem; color: #aaa; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #222; }
+.ticket { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+.ticket-title { margin: 0 0 0.75rem; color: #ffd080; font-size: 1.05em; display: flex; align-items: center; gap: 0.75rem; }
+.badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.75em; font-weight: 700; letter-spacing: 0.03em; }
+.badge-open { background: #1a2a3a; color: #6ab0f5; }
+.badge-haiku { background: #1a2a1a; color: #80d8a0; }
+.badge-sonnet { background: #2a2a1a; color: #ffd080; }
+.badge-opus { background: #2a1a2a; color: #d080ff; }
+.meta { font-size: 0.82em; color: #666; margin-bottom: 0.75rem; }
+.criteria { margin: 0; padding-left: 1.25rem; }
+.criteria li { margin: 0.3rem 0; color: #ccc; font-size: 0.93em; }
+.dep-graph { background: #141414; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1rem; font-family: monospace; font-size: 0.88em; color: #aaa; white-space: pre; }
+ul, ol { padding-left: 1.5rem; }
+li { margin: 0.3rem 0; }
+p { margin: 0.6rem 0; }
+.section-meta { color: #555; font-size: 0.85em; margin-top: -0.5rem; margin-bottom: 1rem; }
